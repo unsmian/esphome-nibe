@@ -248,7 +248,7 @@ void NibeGwClimate::setup() {
       return;
     }
 
-    if (message[RMU_DATA_FLAGS0] & RMU_DATA_FLAGS0_USE_ROOM_SENSOR_SX(this->index_)) {
+    if (message[RMU_DATA_OFFSET_FLAGS0] & RMU_DATA_FLAGS0_USE_ROOM_SENSOR_SX(this->index_)) {
       this->target_temperature = get_u8_decimal(&message[RMU_DATA_OFFSET_TARGET_TEMPERATURE_SX(this->index_)], 0.1, 50);
     } else {
       this->target_temperature = NAN;
