@@ -153,13 +153,13 @@ void NibeGwClimate::publish_current_temperature() {
 void NibeGwClimate::publish_current_temperature(float value) {
   auto data = set_s16_decimal(value, 0.1, -7);
   data_[RMU_WRITE_INDEX_TEMPERATURE] = data;
-  ESP_LOGI(TAG, "Publishing to rmu: 0x%x temp: %f -> %s", address_, value, format_hex_pretty(data).c_str());
+  ESP_LOGI(TAG, "Publishing to rmu: 0x%x temp: %f", address_, value);
 }
 
 void NibeGwClimate::publish_set_point(float value) {
   auto data = set_s16_decimal(value, 0.1, 0);
   data_[RMU_WRITE_INDEX_SETPOINT_SX(this->index_)] = data;
-  ESP_LOGI(TAG, "Publishing to rmu: 0x%x target: %f -> %s", address_, value, format_hex_pretty(data).c_str());
+  ESP_LOGI(TAG, "Publishing to rmu: 0x%x target: %f", address_, value);
 }
 
 void NibeGwClimate::dump_config() {
@@ -221,8 +221,7 @@ void NibeGwClimate::setup() {
       return request_data_type{};
     }
 
-    ESP_LOGD(TAG, "Responding to rmu: 0x%x index: 0x%x data: %s", address_, it->first,
-             format_hex_pretty(it->second).c_str());
+    ESP_LOGD(TAG, "Responding to rmu: 0x%x index: 0x%x", address_, it->first);
 
     std::vector<uint8_t> payload;
     payload.push_back(it->first);
@@ -249,7 +248,7 @@ void NibeGwClimate::setup() {
       return;
     }
 
-    if (message[RMU_DATA_OFFSET_FLAGS0] & RMU_DATA_FLAGS0_USE_ROOM_SENSOR_SX(this->index_)) {
+    if (message[RMU_DATA_FLAGS0] & RMU_DATA_FLAGS0_USE_ROOM_SENSOR_SX(this->index_)) {
       this->target_temperature = get_u8_decimal(&message[RMU_DATA_OFFSET_TARGET_TEMPERATURE_SX(this->index_)], 0.1, 50);
     } else {
       this->target_temperature = NAN;
